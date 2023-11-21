@@ -115,20 +115,19 @@ async def handle_create_report_confirm(
                 salary = await user.get_salary()
                 salary_fraction = salary_percent / 100
             # process report as erroneous
-            if erroneous:
+            if erroneous and partner != settings.BET_20_PARTNER_ID:
                 salary_fraction = 0
                 if report.profit() < 0:
                     # fine amount < 0, because report.profit() < 0
                     fine_amount = report.profit() * 3 * settings.DEFAULT_SALARY_FRACTION
-                    salary = await user.get_salary()
                     await salary.update(amount=salary.amount + fine_amount)
-            else:
-                # update user salary
-                update_amount = float(report.profit()) * salary_fraction
-                await salary.update(
-                    amount=salary.amount + update_amount,
-                    total_amount=salary.total_amount + update_amount,
-                )
+
+            # update user salary
+            update_amount = float(report.profit()) * salary_fraction
+            await salary.update(
+                amount=salary.amount + update_amount,
+                total_amount=salary.total_amount + update_amount,
+            )
 
             # update user balance to report profit
             await user.update(balance=user.balance + float(report.profit()))
