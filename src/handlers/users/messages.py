@@ -22,7 +22,7 @@ from src.utils.validate import is_int
 async def handle_user_reports_date(message: types.Message, state: FSMContext):
     interval = parse_date_interval(message.text)
     if interval is None:
-        await send_message("invalid_interval.j2")
+        await send_message(render_template("invalid_interval.j2"))
         return
     reports = await get_user_reports_by_interval(
         message.from_user.id, interval.start, interval.end

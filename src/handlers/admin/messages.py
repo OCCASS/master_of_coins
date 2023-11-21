@@ -35,7 +35,7 @@ async def handle_add_partner_name(message: types.Message, state: FSMContext):
 async def handle_user_reports_date(message: types.Message, state: FSMContext):
     interval = parse_date_interval(message.text)
     if interval is None:
-        await send_message("invalid_interval.j2")
+        await send_message(render_template("invalid_interval.j2"))
         return
     data = await state.get_data()
     user_id = data.get("user_id", 0)
@@ -104,7 +104,7 @@ async def handle_partner_reports_date(message: types.Message, state: FSMContext)
 async def handle_reports_statistic_date(message: types.Message, state: FSMContext):
     interval = parse_date_interval(message.text)
     if interval is None:
-        await send_message("invalid_interval.j2")
+        await send_message(render_template("invalid_interval.j2"))
         return
 
     reports = await get_reports_by_interval(interval.start, interval.end)
@@ -221,7 +221,7 @@ async def handle_create_operation_amount(message: types.Message, state: FSMConte
 async def handle_operations_date(message: types.Message, state: FSMContext):
     interval = parse_date_interval(message.text)
     if interval is None:
-        await send_message("invalid_interval.j2")
+        await send_message(render_template("invalid_interval.j2"))
         return
     operations = await get_operations_by_interval(interval.start, interval.end)
     for o in operations:
