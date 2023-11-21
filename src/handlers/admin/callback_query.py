@@ -86,14 +86,29 @@ async def handle_confirm_deletion(
             user = await User.get(id=report.user)
             salary = await user.get_salary()
             salary_percent = report.salary_percent
+            if report.partner == settings.BET_20_PARTNER_ID:
+                salary = await user.get_bet20_salary()
+                salary_fraction = settings.BET_20_SALARY_FRACTION
+            else:
+                salary = await user.get_salary()
+                salary_fraction = salary_percent / 100
+            # process report as erroneous
             if report.erroneous:
-                salary_percent = 0
+                salary_fraction = 0
                 if report.profit() < 0:
+                    # fine amount < 0, because report.profit() < 0
                     fine_amount = report.profit() * 3 * settings.DEFAULT_SALARY_FRACTION
                     await salary.update(amount=salary.amount - fine_amount)
             else:
-                # update user balance to report profit
-                await user.update(balance=user.balance - float(report.profit()))
+                # update user salary
+                update_amount = float(report.profit()) * salary_fraction
+                await salary.update(
+                    amount=salary.amount - update_amount,
+                    total_amount=salary.total_amount - update_amount,
+                )
+
+            # update user balance to report profit
+            await user.update(balance=user.balance - float(report.profit()))
             if report.partner == settings.MISHA_PARTNER_ID:
                 await user.update(
                     misha_balance=user.misha_balance - float(report.profit()) * 0.5
@@ -105,22 +120,6 @@ async def handle_confirm_deletion(
                 amount=charity.amount - update_amount,
                 total_amount=charity.total_amount - update_amount,
             )
-            if report.partner == settings.BET_20_PARTNER_ID:
-                # update bet20 user salary if need
-                bet20_salary = await user.get_bet20_salary()
-                update_amount = float(report.profit()) * settings.BET_20_SALARY_FRACTION
-                await bet20_salary.update(
-                    amount=bet20_salary.amount - update_amount,
-                    total_amount=bet20_salary.total_amount - update_amount,
-                )
-            else:
-                # update user salary
-                salary_fraction = salary_percent / 100
-                update_amount = float(report.profit()) * salary_fraction
-                await salary.update(
-                    amount=salary.amount - update_amount,
-                    total_amount=salary.total_amount - update_amount,
-                )
             await deactive_report(report_id)
         case confirm_deletion_form.no:
             await query.message.edit_reply_markup(
