@@ -120,11 +120,17 @@ async def handle_create_report_confirm(
                 if report.profit() < 0:
                     # fine amount < 0, because report.profit() < 0
                     fine_amount = report.profit() * 3 * settings.DEFAULT_SALARY_FRACTION
-                    await salary.update(amounr=salary.amount + fine_amount)
+                    await salary.update(amount=salary.amount + fine_amount)
             else:
-                # update user balance to report profit
-                await user.update(balance=user.balance + float(report.profit()))
+                # update user salary
+                update_amount = float(report.profit()) * salary_fraction
+                await salary.update(
+                    amount=salary.amount + update_amount,
+                    total_amount=salary.total_amount + update_amount,
+                )
 
+            # update user balance to report profit
+            await user.update(balance=user.balance + float(report.profit()))
             if partner == settings.MISHA_PARTNER_ID:
                 await user.update(
                     misha_balance=user.misha_balance + float(report.profit()) * 0.5
@@ -135,12 +141,6 @@ async def handle_create_report_confirm(
             await charity.update(
                 amount=charity.amount + update_amount,
                 total_amount=charity.total_amount + update_amount,
-            )
-            # update user salary
-            update_amount = float(report.profit()) * salary_fraction
-            await salary.update(
-                amount=salary.amount + update_amount,
-                total_amount=salary.total_amount + update_amount,
             )
             await send_message(render_template("create_report/created.j2"))
         case confirm_form.reject:
