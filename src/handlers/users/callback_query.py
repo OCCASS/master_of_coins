@@ -9,8 +9,8 @@ from src.keyboards.inline.callbacks import select_partner, confirm_report
 from src.services.database.api import create_report, get_user_reports_by_interval
 from src.services.database.models import Partner, User, Currency
 from src.services.calc import (
-    total_profit_from,
-    total_bet_amount_from,
+    total_bet20_profit_from,
+    total_bet20_bet_amount_from,
     get_common_total_charity,
 )
 from src.services.templates import render_template
@@ -172,10 +172,10 @@ async def handle_balance_form(
         case balance_form.salary:
             salary = await user.get_salary()
             bet20_salary = await user.get_bet20_salary()
-            total_profit = await total_profit_from(
+            total_profit = await total_bet20_profit_from(
                 user.id, bet20_salary.last_debiting_at
             )
-            total_bet_amount = await total_bet_amount_from(
+            total_bet_amount = await total_bet20_bet_amount_from(
                 user.id, bet20_salary.last_debiting_at
             )
             await send_message(
