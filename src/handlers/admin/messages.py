@@ -143,7 +143,7 @@ async def handle_issue_balance_amount(message: types.Message, state: FSMContext)
 @dp.message_handler(state=States.Admin.Accounting.SetMishaBalance.amount, is_admin=True)
 async def handle_set_misha_balance_amount(message: types.Message, state: FSMContext):
     if not message.text.isdigit():
-        await send_message("integer_error.j2")
+        await send_message(render_template("integer_error.j2"))
         return
 
     data = await state.get_data()
