@@ -1,5 +1,6 @@
 import datetime
 
+from src.data import settings
 from src.services.database.api import (
     get_user_reports_by_interval,
     get_user_reports,
@@ -7,26 +8,28 @@ from src.services.database.api import (
     get_salaries,
     get_charities,
     get_bet20_salaries,
+    get_user_reports_by_partner_and_interval,
+    get_user_reports_by_partner,
 )
 
 
-async def total_profit_from(user: int, from_: datetime.datetime | None) -> float:
+async def total_bet20_profit_from(user: int, from_: datetime.datetime | None) -> float:
     if from_ is not None:
-        reports = await get_user_reports_by_interval(
-            user, from_, datetime.datetime.now()
+        reports = await get_user_reports_by_partner_and_interval(
+            user, settings.BET_20_PARTNER_ID, from_, datetime.datetime.now()
         )
     else:
-        reports = await get_user_reports(user)
+        reports = await get_user_reports_by_partner(user, settings.BET_20_PARTNER_ID)
     return round(sum([r.profit() for r in reports]), 2)
 
 
-async def total_bet_amount_from(user: int, from_: datetime.datetime | None) -> float:
+async def total_bet20_amount_from(user: int, from_: datetime.datetime | None) -> float:
     if from_ is not None:
-        reports = await get_user_reports_by_interval(
-            user, from_, datetime.datetime.now()
+        reports = await get_user_reports_by_partner_and_interval(
+            user, settings.BET_20_PARTNER_ID, from_, datetime.datetime.now()
         )
     else:
-        reports = await get_user_reports(user)
+        reports = await get_user_reports_by_partner(user, settings.BET_20_PARTNER_ID)
     return round(sum([r.amount for r in reports]), 2)
 
 

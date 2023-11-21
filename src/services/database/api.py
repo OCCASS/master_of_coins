@@ -134,6 +134,26 @@ async def get_reports_by_interval(
     )
 
 
+async def get_user_reports_by_partner_and_interval(
+    user: int, partner: int, start: datetime.datetime, end: datetime.datetime
+) -> Sequence[Report]:
+    return await Report.filter(
+        and_(
+            Report.user == user,
+            Report.partner == partner,
+            Report.created_at >= start,
+            Report.created_at <= end,
+            Report.active == True,
+        )
+    )
+
+
+async def get_user_reports_by_partner(user: int, partner: int) -> Sequence[Report]:
+    return await Report.filter(
+        and_(Report.user == user, Report.partner == partner, Report.active == True)
+    )
+
+
 async def deactive_report(report_id: int) -> None:
     report = await Report.get(id=report_id)
     await report.update(active=False)

@@ -95,6 +95,8 @@ async def handle_partner_reports_date(message: types.Message, state: FSMContext)
             ),
             photo=r.photo,
         )
+    excel_file = await excel.create_reports_excel(reports)
+    await bot.send_document(message.chat.id, open(excel_file, "rb"))
     await state.reset_state(with_data=True)
 
 
