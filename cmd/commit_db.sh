@@ -5,5 +5,5 @@ if [[ "$1" -eq "" ]]; then
     exit 1
 fi
 
-alembic revision --autogenerate -m $1
+alembic revision --autogenerate -m "$1"
 

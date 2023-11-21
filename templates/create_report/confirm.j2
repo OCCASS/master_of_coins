@@ -1,0 +1,11 @@
+Проверьте, все верно?<br>
+<br>
+<b>Сумма ставки:</b> <code>{{ amount }}{{ currency.symbol }}</code><br>
+<b>Сумма возврата:</b> <code>{{ refund_amount }}{{ currency.symbol }}</code><br>
+<b>Процент зарплаты:</b> <code>{{ salary_percent }}%</code><br>
+<b>Партнер:</b> <code>{{ partner.name }}</code><br>
+<br>
+{% if erroneous %}
+    ❌ <i>Ошибочный отчет</i>
+{% endif %}
+

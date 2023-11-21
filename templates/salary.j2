@@ -1,0 +1,18 @@
+Твоя <b>зарплата</b> с 
+{% if salary.last_debiting_at %}
+    (<code>{{ salary.last_debiting_at.strftime('%d.%m.%Y') }}</code>)
+{% else %}
+    (<code>не снималась</code>)
+{% endif %}
+по текущий день составляет: <code>{{ currency.convert_from_eur(salary.amount) }}{{ currency.symbol }}</code> (<code>{{ salary.amount }}€</code>)<br>
+<br>
+Твоя <b>зарплата по Бет 2.0</b> с 
+{% if bet20_salary.last_debiting_at %}
+    (<code>{{ bet20_salary.last_debiting_at.strftime('%d.%m.%Y') }}</code>)
+{% else %}
+    (<code>не снималась</code>)
+{% endif %}
+по текущий день составляет: <code>{{ currency.convert_from_eur(bet20_salary.amount) }}{{ currency.symbol }}</code> (<code>{{ bet20_salary.amount }}€</code>)<br>
+<b>Проставлено:</b> <code>{{ currency.convert_from_eur(total_bet_amount) }}{{ currency.symbol }}</code> (<code>{{ total_bet_amount }}€</code>)<br>
+<b>Профит:</b> <code>{{ currency.convert_from_eur(total_profit) }}{{ currency.symbol }}</code> (<code>{{ total_profit }}€</code>)
+

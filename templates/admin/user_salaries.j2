@@ -1,0 +1,10 @@
+<b>Зарплата пользователей:</b><br>
+<br>
+{% for item in data %}
+    @{{ item['user'].username }} | <code>{{ item['user'].balance }}€</code> | <code>{{ item['salary'].amount }}€</code> |
+    {% if item['salary'].last_debiting_at %}
+        <code>{{ item['salary'].last_debiting_at.strftime('%d.%m.%Y %H:%M') }}</code><br>
+    {% else %}
+        <code>не снималась</code><br>
+    {% endif %}
+{% endfor %}

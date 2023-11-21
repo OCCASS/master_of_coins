@@ -62,15 +62,19 @@ class Model(DeclarativeBase):
             instance = await cls.create(**kwargs)
             return instance, True
 
-    async def update(self, **new_values) -> None:
+    async def update(self, **new_values) -> Self:
         new_values = self._filter_new_values(new_values)
         async with session_scope() as session:
-            unset_values = {k: getattr(self, k) for k in self.columns if k not in new_values}
+            unset_values = {
+                k: getattr(self, k) for k in self.columns if k not in new_values
+            }
             q = update(self.__class__).values(**new_values).filter_by(**unset_values)
             await session.execute(q)
 
         for key, value in new_values.items():
             setattr(self, key, value)
+
+        return self
 
     async def delete(self) -> None:
         async with session_scope() as session:

@@ -1,0 +1,6 @@
+{% for user in users %}
+    @{{ user.username }} – <code>{{ user.balance }}€</code><br>
+{% endfor %}
+<br>
+<b>Общий баланс составляет:</b> <code>{{ balance }}€</code>
+

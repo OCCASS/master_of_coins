@@ -1,0 +1,5 @@
+Зарплата
+{% if partner_name %}
+    по направлению <b>{{ partner_name }}</b> 
+{% endif %}
+списана на <code>{{ currency.convert_from_eur(amount) }}{{ currency.symbol }}</code> (<code>{{ amount }}€</code>)

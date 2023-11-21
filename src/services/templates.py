@@ -6,7 +6,9 @@ import jinja2
 from src.data import settings
 
 
-def render_template(template_name: str, *, context: dict | None = None, templates_path: Path | None = None) -> str:
+def render_template(
+    template_name: str, *, context: dict | None = None, templates_path: Path | None = None
+) -> str:
     """
     Render jinja2 template
     :param template_name: name of jinja2 template

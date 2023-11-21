@@ -1,4 +1,4 @@
 #!/bin/bash
 
-alembic upgarde head
+alembic upgrade head
 

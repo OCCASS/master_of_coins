@@ -1,7 +1,7 @@
 import logging
 from collections import namedtuple
 from typing import TypeAlias
-from typing import Union
+from typing import Union, Optional
 
 from aiogram.types import InlineKeyboardButton
 from aiogram.types import InlineKeyboardMarkup
@@ -45,9 +45,9 @@ class BaseForm:
     @classmethod
     def get_keyboard(
         cls,
-        exceptions: KeyboardExceptions = None,
-        row_width: int | None = None,
-        rows_template: tuple | list[int] | None = None,
+        exceptions: Optional[KeyboardExceptions] = None,
+        row_width: Optional[int] = None,
+        rows_template: Optional[tuple | list[int]] = None,
     ) -> ReplyKeyboardMarkup:
         """
         :param exceptions: fields ids list to expect it in keyboard
@@ -61,7 +61,9 @@ class BaseForm:
 
         # if buttons in template more than total buttons count
         if rows_template and sum(rows_template) != len(cls.fields()):
-            raise ValueError("Template is not correct, count of buttons is bigger or lower than form fields count")
+            raise ValueError(
+                "Template is not correct, count of buttons is bigger or lower than form fields count"
+            )
 
         # if no one from types is used to render use row_width by default
         if row_width is None and rows_template is None:
@@ -82,11 +84,11 @@ class BaseForm:
     @classmethod
     def get_inline_keyboard(
         cls,
-        callback_data: CallbackData = None,
-        callback_data_args: dict | None = None,
-        exceptions: KeyboardExceptions = None,
-        rows_template: tuple | list[int] = None,
-        row_width: int = None,
+        callback_data: Optional[CallbackData] = None,
+        callback_data_args: Optional[dict] = None,
+        exceptions: Optional[KeyboardExceptions] = None,
+        rows_template: Optional[tuple | list[int]] = None,
+        row_width: Optional[int] = None,
     ) -> InlineKeyboardMarkup:
         """
         :param callback_data: callback_data of inline keyboard
@@ -102,7 +104,9 @@ class BaseForm:
 
         # if buttons in template more than total buttons count
         if rows_template and sum(rows_template) != len(cls.fields()):
-            raise ValueError("Template is not correct, count of buttons is bigger or lower than form fields count")
+            raise ValueError(
+                "Template is not correct, count of buttons is bigger or lower than form fields count"
+            )
 
         # if no one from types is used to render use row_width by default
         if row_width is None and rows_template is None:
@@ -143,14 +147,19 @@ class BaseForm:
 
     @classmethod
     def _add_buttons_by_rows_template(
-        cls, keyboard: Keyboard, buttons: list[_KeyboardButton], rows_template: list | tuple
+        cls,
+        keyboard: Keyboard,
+        buttons: list[_KeyboardButton],
+        rows_template: list | tuple,
     ) -> None:
         for index, count_in_row in enumerate(rows_template):
             offset = sum(rows_template[:index])
             keyboard.row(*buttons[offset : offset + count_in_row])
 
     @classmethod
-    def _add_buttons_by_row_width(cls, keyboard: Keyboard, buttons: list[_KeyboardButton], row_width: int) -> None:
+    def _add_buttons_by_row_width(
+        cls, keyboard: Keyboard, buttons: list[_KeyboardButton], row_width: int
+    ) -> None:
         for i in range(0, len(buttons), row_width):
             keyboard.row(*buttons[i : i + row_width])
 
@@ -170,12 +179,9 @@ class BaseForm:
 
         return
 
-    def __getattr__(self, item):
-        pass
-
 
 class FormField:
-    def __init__(self, text: str, id_: int | str = None):
+    def __init__(self, text: str, id_: Optional[int | str] = None):
         self.text = text
         if id_ is None:
             self.id = -1
@@ -193,4 +199,4 @@ class FormField:
             return False
 
     def __repr__(self):
-        return f"<FormField id={self.id}, text={self.text}>"
+        return f'<FormField id={self.id}, text="{self.text}">'

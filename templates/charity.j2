@@ -1,0 +1,9 @@
+<b>Сумма благотворительности собранная за все время:</b> <code>{{ currency.convert_from_eur(common_total_amount) }}{{ currency.symbol }}</code> ({{ common_total_amount }}€)<br>
+<b>Моя сумма собранная за все время:</b> <code>{{ currency.convert_from_eur(charity.total_amount) }}{{ currency.symbol }}</code> (<code>{{ charity.total_amount }}€</code>)<br>
+<br>
+{% if charity.last_debiting_at %}
+    <b>Дата последнего снятия:</b> <code>{{ charity.last_debiting_at.strftime('%d.%m.%Y %H:%M') }}</code><br>
+{% else %}
+    <b>Дата последнего снятия:</b> <code>не снималось</code><br>
+{% endif %}
+<b>Сумма благотворительности:</b> <code>{{ currency.convert_from_eur(charity.amount) }}{{ currency.symbol }}</code> (<code>{{ charity.amount }}€</code>)

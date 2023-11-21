@@ -1,3 +1,6 @@
 def register_all():
-    for module in ("errors", "users", "groups", "channels"):
+    for module in (
+        "admin",
+        "users",
+    ):
         __import__(f"src.handlers.{module}")
