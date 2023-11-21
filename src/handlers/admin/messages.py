@@ -80,10 +80,13 @@ async def handle_partner_reports_date(message: types.Message, state: FSMContext)
         await send_message(render_template("invalid_interval.j2"))
         return
     data = await state.get_data()
-    partner_id = data.get("partner_id", 0)
-    reports = await get_partner_reports_by_interval(
-        partner_id, interval.start, interval.end
-    )
+    partner_id = data.get("partner_id", -1)
+    if partner_id == -1:
+        reports = await get_reports_by_interval(interval.start, interval.end)
+    else:
+        reports = await get_partner_reports_by_interval(
+            partner_id, interval.start, interval.end
+        )
     for r in reports:
         partner = await r.get_partner()
         await send_message(

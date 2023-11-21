@@ -52,7 +52,7 @@ async def handle_create_report_partner(
     query: types.CallbackQuery, callback_data: dict, state: FSMContext
 ):
     await query.message.delete_reply_markup()
-    partner_id = int(callback_data.get("id", 0))
+    partner_id = int(callback_data.get("id", -1))
 
     if partner_id != settings.BET_20_PARTNER_ID:
         await send_message(

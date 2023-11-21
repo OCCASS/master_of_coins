@@ -11,6 +11,9 @@ def get_select_partner_keyboard(
     partners: Sequence[Partner],
 ) -> types.InlineKeyboardMarkup:
     keyboard = types.InlineKeyboardMarkup()
+    keyboard.add(
+        types.InlineKeyboardButton("Все", callback_data=select_partner.new(id=-1))
+    )
     for p in partners:
         keyboard.add(
             types.InlineKeyboardButton(

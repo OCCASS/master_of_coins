@@ -168,7 +168,7 @@ async def handle_remove_partner_partner(
     query: types.CallbackQuery, callback_data: dict, state: FSMContext
 ):
     await query.message.delete_reply_markup()
-    partner_id = int(callback_data.get("id", 0))
+    partner_id = int(callback_data.get("id", -1))
     partner = await Partner.get(id=partner_id)
     await partner.update(active=False)
     await send_message(render_template("admin/partner_removed.j2"))
@@ -384,7 +384,7 @@ async def handle_partner_reports_partner(
     query: types.CallbackQuery, callback_data: dict, state: FSMContext
 ):
     await query.message.delete_reply_markup()
-    partner_id = int(callback_data.get("id", 0))
+    partner_id = int(callback_data.get("id", -2))
     await send_message(
         render_template("enter_date.j2"), reply_markup=types.ReplyKeyboardRemove()
     )
