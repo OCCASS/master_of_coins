@@ -2,8 +2,6 @@ import datetime
 
 from src.data import settings
 from src.services.database.api import (
-    get_user_reports_by_interval,
-    get_user_reports,
     get_users,
     get_salaries,
     get_charities,
