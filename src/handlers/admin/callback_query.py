@@ -98,6 +98,7 @@ async def handle_confirm_deletion(
                 if report.profit() < 0:
                     # fine amount < 0, because report.profit() < 0
                     fine_amount = report.profit() * 3 * settings.DEFAULT_SALARY_FRACTION
+                    salary = await user.get_salary()
                     await salary.update(amount=salary.amount - fine_amount)
             else:
                 # update user salary
@@ -621,7 +622,9 @@ async def handle_reports_form(
             )
             await state.set_state(States.Admin.Reports.User.user)
         case reports_form.partner_reports:
-            select_partner_keyboard = get_select_partner_keyboard(await get_partners())
+            select_partner_keyboard = get_select_partner_keyboard(
+                await get_partners(), all_partner_button=True
+            )
             await send_message(
                 render_template("admin/partner.j2"),
                 reply_markup=select_partner_keyboard,

@@ -120,6 +120,7 @@ async def handle_create_report_confirm(
                 if report.profit() < 0:
                     # fine amount < 0, because report.profit() < 0
                     fine_amount = report.profit() * 3 * settings.DEFAULT_SALARY_FRACTION
+                    salary = await user.get_salary()
                     await salary.update(amount=salary.amount + fine_amount)
             else:
                 # update user salary

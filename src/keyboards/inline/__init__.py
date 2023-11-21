@@ -8,12 +8,13 @@ from .callbacks import select_partner, select_user, select_currency
 
 
 def get_select_partner_keyboard(
-    partners: Sequence[Partner],
+    partners: Sequence[Partner], all_partner_button: bool = False
 ) -> types.InlineKeyboardMarkup:
     keyboard = types.InlineKeyboardMarkup()
-    keyboard.add(
-        types.InlineKeyboardButton("Все", callback_data=select_partner.new(id=-1))
-    )
+    if all_partner_button:
+        keyboard.add(
+            types.InlineKeyboardButton("Все", callback_data=select_partner.new(id=-1))
+        )
     for p in partners:
         keyboard.add(
             types.InlineKeyboardButton(
