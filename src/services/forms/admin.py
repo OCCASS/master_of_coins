@@ -82,6 +82,11 @@ class CurrentMonthForm(BaseForm):
     current_month = FormField("Текущий месяц")
 
 
+class BalanceTypeForm(BaseForm):
+    default = FormField("Обычный баланс")
+    misha = FormField("Баланс Миши")
+
+
 accept_new_user_form = AcceptNewUserForm()
 start_form = StartForm()
 accounting_form = AccountingForm()
@@ -96,3 +101,4 @@ confirm_deletion_form = ConfirmDeletionForm()
 salary_partner_form = SalaryPartnerForm()
 remove_charity_form = RemoveCharityForm()
 current_month_form = CurrentMonthForm()
+balance_type_form = BalanceTypeForm()

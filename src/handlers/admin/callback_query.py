@@ -43,6 +43,7 @@ from src.services.forms.admin import (
     salary_partner_form,
     remove_charity_form,
     current_month_form,
+    balance_type_form,
 )
 from src.services.database.api import (
     create_user,
@@ -271,6 +272,41 @@ async def handle_accept_new_user_form(
             await send_message(
                 render_template("membership_request_declined.j2"), user_id=user_id
             )
+
+
+@dp.callback_query_handler(
+    balance_type_form.callback_data().filter(),
+    state=States.Admin.Other.CreateOperation.balance_type,
+    is_admin=True,
+)
+async def handle_create_operation_balance_type(
+    query: types.CallbackQuery, callback_data: dict, state: FSMContext
+):
+    await query.message.delete_reply_markup()
+    option_id = callback_data.get("id")
+    await send_message(
+        render_template("admin/amount.j2"), reply_markup=types.ReplyKeyboardRemove()
+    )
+    await state.update_data(
+        balance_type="default" if option_id == balance_type_form.default else "misha"
+    )
+    await state.set_state(States.Admin.Other.CreateOperation.amount)
+
+
+@dp.callback_query_handler(
+    select_user.filter(), is_admin=True, state=States.Admin.Other.CreateOperation.user
+)
+async def handle_create_operations_user(
+    query: types.CallbackQuery, callback_data: dict, state: FSMContext
+):
+    await query.message.delete_reply_markup()
+    user_id = int(callback_data.get("id", 0))
+    await send_message(
+        render_template("admin/select_balance.j2"),
+        reply_markup=balance_type_form.get_inline_keyboard(),
+    )
+    await state.update_data(user_id=user_id)
+    await state.set_state(States.Admin.Other.CreateOperation.balance_type)
 
 
 @dp.callback_query_handler(
@@ -605,7 +641,7 @@ async def handle_accounting_form(
         case accounting_form.users_salary:
             await query.message.edit_text(
                 render_template("admin/select_action.j2"),
-                reply_markup=salary_partner_form.get_inline_keyboard(row_width=2),
+                reply_markup=salary_partner_form.get_inline_keyboard(),
             )
         case accounting_form.charity:
             await query.message.delete_reply_markup()
@@ -722,14 +758,10 @@ async def handle_other_form(
             )
             await state.set_state(States.Admin.Other.IssueBalance.user)
         case other_form.create_operation:
-            user = await User.get(id=query.from_user.id)
-            await send_message(
-                render_template(
-                    "create_operation/amount.j2",
-                    context={"currency": await user.get_currency()},
-                ),
-            )
-            await state.set_state(States.CreateOperation.amount)
+            users = await get_users()
+            keyboard = await get_select_users_keyboard(users)
+            await send_message(render_template("admin/user.j2"), reply_markup=keyboard)
+            await state.set_state(States.Admin.Other.CreateOperation.user)
         case other_form.get_operations:
             await send_message(
                 render_template("enter_date.j2"),

@@ -153,7 +153,7 @@ async def handle_set_misha_balance_amount(message: types.Message, state: FSMCont
     await state.reset_state(with_data=True)
 
 
-@dp.message_handler(state=States.CreateOperation.amount, is_admin=True)
+@dp.message_handler(state=States.Admin.Other.CreateOperation.amount, is_admin=True)
 async def handle_create_operation_amount(message: types.Message, state: FSMContext):
     if not is_float(message.text):
         await send_message(render_template("invalid_integer.j2"))
@@ -161,7 +161,7 @@ async def handle_create_operation_amount(message: types.Message, state: FSMConte
 
     await send_message(render_template("create_operation/reason.j2"))
     await state.update_data(amount=float(message.text))
-    await state.set_state(States.CreateOperation.reason)
+    await state.set_state(States.Admin.Other.CreateOperation.reason)
 
 
 @dp.message_handler(state=States.Admin.Accounting.SetUserSalary.amount, is_admin=True)
@@ -197,22 +197,29 @@ async def handle_set_user_salary_amount(message: types.Message, state: FSMContex
     await state.reset_state(with_data=True)
 
 
-@dp.message_handler(state=States.CreateOperation.reason, is_admin=True)
-async def handle_create_operation_amount(message: types.Message, state: FSMContext):
+@dp.message_handler(state=States.Admin.Other.CreateOperation.reason, is_admin=True)
+async def handle_create_operation_reason(message: types.Message, state: FSMContext):
     data = await state.get_data()
     amount = data.get("amount", 0)
+    balance_type = data.get("balance_type", "")
 
-    user = await User.get(id=message.from_user.id)
-    currency = await user.get_currency()
+    user = await User.get(id=data.get("user_id", 0))
 
     # create operation
-    await create_operation(
-        message.from_user.id, currency.convert_to_eur(amount), message.text
-    )
+    await create_operation(user.id, amount, message.text)
     # update user balance
     await user.update(balance=user.balance + amount)
+    if balance_type == "misha":
+        await user.update(misha_balance=user.misha_balance + amount)
 
     await send_message(render_template("create_operation/created.j2"))
+    await send_message(
+        render_template(
+            "admin/created_operation.j2",
+            context={"amount": amount, "currency": await user.get_currency()},
+        ),
+        user_id=user.id,
+    )
 
     await state.reset_state(with_data=True)
 

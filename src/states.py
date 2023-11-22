@@ -67,6 +67,12 @@ class States(StatesGroup):
                 user = State()
                 currency = State()
 
+            class CreateOperation(StatesGroup):
+                user = State()
+                balance_type = State()
+                amount = State()
+                reason = State()
+
             class ManagePartners(StatesGroup):
                 action = State()
 
