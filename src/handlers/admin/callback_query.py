@@ -579,9 +579,9 @@ async def handle_balances_form(
             )
         case balances_form.business:
             common_balance = round(await get_common_balance(), 2)
-            common_misha_balance = round(await get_common_misha_balance(), 2)
-            common_salary = round(await get_common_salary(), 2)
-            common_bet20_salary = round(await get_common_bet20_salary(), 2)
+            common_misha_balance = abs(round(await get_common_misha_balance(), 2))
+            common_salary = abs(round(await get_common_salary(), 2))
+            common_bet20_salary = abs(round(await get_common_bet20_salary(), 2))
             total = (
                 common_balance
                 - common_misha_balance
