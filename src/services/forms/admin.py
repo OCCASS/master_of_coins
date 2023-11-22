@@ -78,6 +78,10 @@ class RemoveCharityForm(BaseForm):
     remove = FormField("↪️ Снять все")
 
 
+class CurrentMonthForm(BaseForm):
+    current_month = FormField("Текущий месяц")
+
+
 accept_new_user_form = AcceptNewUserForm()
 start_form = StartForm()
 accounting_form = AccountingForm()
@@ -91,3 +95,4 @@ delete_report_form = DeleteReportForm()
 confirm_deletion_form = ConfirmDeletionForm()
 salary_partner_form = SalaryPartnerForm()
 remove_charity_form = RemoveCharityForm()
+current_month_form = CurrentMonthForm()

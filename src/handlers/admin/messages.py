@@ -224,6 +224,11 @@ async def handle_operations_date(message: types.Message, state: FSMContext):
         await send_message(render_template("invalid_interval.j2"))
         return
     operations = await get_operations_by_interval(interval.start, interval.end)
+    if len(operations) == 0:
+        await send_message(render_template("admin/no_operations.j2"))
+        await state.reset_state(with_data=True)
+        return
+
     for o in operations:
         user = await User.get(id=o.user)
         await send_message(

@@ -21,3 +21,12 @@ def parse_date_interval(s: str) -> DateInterval | None:
     except Exception as e:
         logging.error(e)
         return None
+
+
+def get_current_month_interval() -> DateInterval:
+    now = datetime.datetime.now()
+    start = now.replace(day=1, hour=0, minute=0, second=0)
+    end = start.replace(
+        month=start.month % 12 + 1, hour=23, minute=59, second=59
+    ) - datetime.timedelta(days=1)
+    return DateInterval(start, end)

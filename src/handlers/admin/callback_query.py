@@ -42,6 +42,7 @@ from src.services.forms.admin import (
     delete_report_form,
     salary_partner_form,
     remove_charity_form,
+    current_month_form,
 )
 from src.services.database.api import (
     create_user,
@@ -56,8 +57,75 @@ from src.services.database.api import (
     get_bet20_salaries,
     deactive_report,
     get_charities,
+    get_reports_by_interval,
+    get_operations_by_interval,
 )
 from src.services.database.models import User, Partner, Salary, Bet20Salary, Report
+from src.utils.parse import get_current_month_interval
+
+
+@dp.callback_query_handler(
+    current_month_form.callback_data().filter(),
+    state=States.Admin.Reports.Statistic.date,
+    is_admin=True,
+)
+async def handle_reports_statistic_date_month(
+    query: types.CallbackQuery, callback_data: dict, state: FSMContext
+):
+    await query.message.delete_reply_markup()
+    interval = get_current_month_interval()
+    if interval is None:
+        await send_message(render_template("invalid_interval.j2"))
+        return
+
+    reports = await get_reports_by_interval(interval.start, interval.end)
+    common_turnover = 0
+    common_profit = 0
+    for r in reports:
+        common_turnover += r.amount
+        common_profit += r.profit()
+    await send_message(
+        render_template(
+            "admin/reports_statistic.j2",
+            context={
+                "turnover": common_turnover,
+                "profit": common_profit,
+                "count": len(reports),
+            },
+        )
+    )
+    await state.reset_state(with_data=True)
+
+
+@dp.callback_query_handler(
+    current_month_form.callback_data().filter(),
+    state=States.Admin.Other.Operations.date,
+    is_admin=True,
+)
+async def handle_operations_date_month(
+    query: types.CallbackQuery, callback_data: dict, state: FSMContext
+):
+    await query.message.delete_reply_markup()
+    interval = get_current_month_interval()
+    if interval is None:
+        await send_message(render_template("invalid_interval.j2"))
+        return
+    operations = await get_operations_by_interval(interval.start, interval.end)
+
+    if len(operations) == 0:
+        await send_message(render_template("admin/no_operations.j2"))
+        await state.reset_state(with_data=True)
+        return
+
+    for o in operations:
+        user = await User.get(id=o.user)
+        await send_message(
+            render_template(
+                "admin/operation.j2",
+                context={"operation": o, "username": user.username},
+            ),
+        )
+    await state.reset_state(with_data=True)
 
 
 @dp.callback_query_handler(delete_report.filter(), state="*")
@@ -600,8 +668,6 @@ async def handle_balances_form(
                     },
                 )
             )
-        case balances_form.back:
-            await query.message.edit_reply_markup(start_form.get_inline_keyboard())
 
 
 @dp.callback_query_handler(
@@ -632,7 +698,7 @@ async def handle_reports_form(
         case reports_form.statistic:
             await send_message(
                 render_template("enter_date.j2"),
-                reply_markup=types.ReplyKeyboardRemove(),
+                reply_markup=current_month_form.get_inline_keyboard(),
             )
             await state.set_state(States.Admin.Reports.Statistic.date)
         case reports_form.back:
@@ -665,7 +731,10 @@ async def handle_other_form(
             )
             await state.set_state(States.CreateOperation.amount)
         case other_form.get_operations:
-            await send_message(render_template("enter_date.j2"))
+            await send_message(
+                render_template("enter_date.j2"),
+                reply_markup=current_month_form.get_inline_keyboard(),
+            )
             await state.set_state(States.Admin.Other.Operations.date)
         case other_form.add_admin:
             not_admin_users = await get_not_admin_users()
