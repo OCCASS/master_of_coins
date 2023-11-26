@@ -61,7 +61,7 @@ async def handle_create_report_photo(message: types.Message, state: FSMContext):
 
 @dp.message_handler(state=States.CreateReport.amount)
 async def handle_create_report_amount(message: types.Message, state: FSMContext):
-    if not is_int(message.text):
+    if not is_float(message.text):
         await send_message(render_template("invalid_integer.j2"))
         return
 
@@ -73,13 +73,13 @@ async def handle_create_report_amount(message: types.Message, state: FSMContext)
             context={"currency": currency},
         ),
     )
-    await state.update_data(amount=int(message.text))
+    await state.update_data(amount=float(message.text))
     await state.set_state(States.CreateReport.refund_amount)
 
 
 @dp.message_handler(state=States.CreateReport.refund_amount)
 async def handle_create_report_refund_amount(message: types.Message, state: FSMContext):
-    if not is_int(message.text):
+    if not is_float(message.text):
         await send_message(render_template("invalid_integer.j2"))
         return
 
@@ -88,7 +88,7 @@ async def handle_create_report_refund_amount(message: types.Message, state: FSMC
         render_template("create_report/partner.j2"),
         reply_markup=get_select_partner_keyboard(partners),
     )
-    await state.update_data(refund_amount=int(message.text))
+    await state.update_data(refund_amount=float(message.text))
     await state.set_state(States.CreateReport.partner)
 
 

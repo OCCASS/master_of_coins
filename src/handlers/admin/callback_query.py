@@ -170,7 +170,7 @@ async def handle_confirm_deletion(
                     await salary.update(amount=salary.amount - fine_amount)
 
             # update user salary
-            update_amount = float(report.profit()) * salary_fraction
+            update_amount = report.amount * salary_fraction
             await salary.update(
                 amount=salary.amount - update_amount,
                 total_amount=salary.total_amount - update_amount,
