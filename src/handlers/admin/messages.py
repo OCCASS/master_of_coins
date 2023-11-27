@@ -152,7 +152,7 @@ async def handle_set_misha_balance_amount(message: types.Message, state: FSMCont
 
     data = await state.get_data()
     user = await User.get(id=data.get("user_id"))
-    await user.update(misha_balance=int(message.text))
+    await user.update(misha_balance=float(message.text))
     await send_message(render_template("admin/misha_balance_set.j2"))
     await state.reset_state(with_data=True)
 
@@ -176,7 +176,7 @@ async def handle_set_user_salary_amount(message: types.Message, state: FSMContex
 
     data = await state.get_data()
     user_id = data.get("user_id")
-    amount = int(message.text)
+    amount = float(message.text)
     user = await User.get(id=user_id)
     if data.get("partner") == enums.SalaryPartner.DEFAULT.value:
         salary = await Salary.get(user=user_id)
