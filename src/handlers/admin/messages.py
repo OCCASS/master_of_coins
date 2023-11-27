@@ -21,7 +21,7 @@ from src.keyboards.inline.callbacks import delete_report
 from src.states import States
 from src.utils.parse import parse_date_interval
 from src.utils.send import send_message
-from src.utils.validate import is_float, is_int
+from src.utils.validate import is_float
 
 
 @dp.message_handler(state=States.Admin.Other.ManagePartners.Add.name, is_admin=True)
@@ -132,13 +132,13 @@ async def handle_reports_statistic_date(message: types.Message, state: FSMContex
 
 @dp.message_handler(state=States.Admin.Other.IssueBalance.amount, is_admin=True)
 async def handle_issue_balance_amount(message: types.Message, state: FSMContext):
-    if not is_int(message.text):
+    if not is_float(message.text):
         await send_message(render_template("integer_error.j2"))
         return
 
     data = await state.get_data()
     user = await User.get(id=data.get("user_id"))
-    await user.update(balance=user.balance + int(message.text))
+    await user.update(balance=user.balance + float(message.text))
     await send_message(render_template("user_balance_issue_alert.j2"), user_id=user.id)
     await send_message(render_template("balance_issued.j2"))
     await state.reset_state(with_data=True)
