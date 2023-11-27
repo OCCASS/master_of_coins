@@ -110,24 +110,27 @@ async def handle_create_report_confirm(
 
             if partner == settings.BET_20_PARTNER_ID:
                 salary = await user.get_bet20_salary()
-                salary_fraction = settings.BET_20_SALARY_FRACTION
+                update_amount = report.profit() * settings.BET_20_SALARY_FRACTION
+                await salary.update(
+                    amount=salary.amount + update_amount,
+                    total_amount=salary.total_amount + update_amount,
+                )
             else:
                 salary = await user.get_salary()
                 salary_fraction = salary_percent / 100
-            # process report as erroneous
-            if erroneous and partner != settings.BET_20_PARTNER_ID:
-                salary_fraction = 0
-                if report.profit() < 0:
-                    # fine amount < 0, because report.profit() < 0
-                    fine_amount = report.profit() * 3 * settings.DEFAULT_SALARY_FRACTION
-                    await salary.update(amount=salary.amount + fine_amount)
 
-            # update user salary
-            update_amount = report.amount * salary_fraction
-            await salary.update(
-                amount=salary.amount + update_amount,
-                total_amount=salary.total_amount + update_amount,
-            )
+                if erroneous:
+                    fine_amount = report.amount * 3 * salary_fraction
+                    await salary.update(
+                        amount=salary.amount - fine_amount,
+                        total_amount=salary.total_amount - fine_amount,
+                    )
+                else:
+                    update_amount = report.amount * salary_fraction
+                    await salary.update(
+                        amount=salary.amount + update_amount,
+                        total_amount=salary.total_amount + update_amount,
+                    )
 
             # update user balance to report profit
             await user.update(balance=user.balance + float(report.profit()))
