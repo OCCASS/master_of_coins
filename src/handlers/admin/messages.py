@@ -45,9 +45,11 @@ async def handle_user_reports_date(message: types.Message, state: FSMContext):
 
     for r in reports:
         partner = await r.get_partner()
+        user = await r.get_user()
         await send_message(
             render_template(
-                "admin/report.j2", context={"report": r, "partner": partner}
+                "admin/report.j2",
+                context={"report": r, "partner": partner, "user": user},
             ),
             photo=r.photo,
             reply_markup=delete_report_form.get_inline_keyboard(
@@ -89,9 +91,11 @@ async def handle_partner_reports_date(message: types.Message, state: FSMContext)
         )
     for r in reports:
         partner = await r.get_partner()
+        user = await r.get_user()
         await send_message(
             render_template(
-                "admin/report.j2", context={"report": r, "partner": partner}
+                "admin/report.j2",
+                context={"report": r, "partner": partner, "user": user},
             ),
             photo=r.photo,
         )

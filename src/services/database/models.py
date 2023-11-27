@@ -79,6 +79,9 @@ class Report(Model):
     async def get_partner(self) -> "Partner":
         return await Partner.get(id=self.partner)
 
+    async def get_user(self) -> "User":
+        return await User.get(id=self.user)
+
     def profit(self) -> float | int:
         return self.refund_amount - self.amount
 

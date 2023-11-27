@@ -15,7 +15,6 @@ from src.services.database.api import (
 )
 from src.services.database.models import User, Partner, Currency
 from src.keyboards.inline import get_select_partner_keyboard
-from src.utils.validate import is_int
 
 
 @dp.message_handler(state=States.UserReports.date)

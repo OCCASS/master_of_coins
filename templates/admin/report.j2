@@ -3,6 +3,7 @@
 <b>Процент зарплаты:</b> <code>{{ report.salary_percent }}%</code><br>
 <b>Партнер:</b> <code>{{ partner.name }}</code><br>
 <b>Дата создания:</b> <code>{{ report.created_at.strftime('%d.%m.%Y %H:%M') }}</code><br>
+<b>Пользователь:</b> @{{ user.username }}
 <br>
 {% if report.erroneous %}
     <i>❌ Ошибочный отчет</i>
