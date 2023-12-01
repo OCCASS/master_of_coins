@@ -133,10 +133,10 @@ async def handle_create_report_confirm(
                     )
 
             # update user balance to report profit
-            await user.update(balance=user.balance + float(report.profit()))
+            await user.update(balance=user.balance + report.profit())
             if partner == settings.MISHA_PARTNER_ID:
                 await user.update(
-                    misha_balance=user.misha_balance + float(report.profit()) * 0.5
+                    misha_balance=user.misha_balance + report.profit() * 0.5
                 )
             # update charity balance
             charity = await user.get_charity()

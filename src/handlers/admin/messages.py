@@ -185,7 +185,6 @@ async def handle_set_user_salary_amount(message: types.Message, state: FSMContex
         salary = await Bet20Salary.get(user=user_id)
         partner_name = "Бет 2.0"
     await salary.update(amount=amount, last_debiting_at=datetime.datetime.now())
-    await user.update(balance=user.balance - amount)
     await send_message(
         render_template(
             "salary_set_alert.j2",
