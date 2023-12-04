@@ -145,7 +145,7 @@ async def handle_create_operation_reason(message: types.Message, state: FSMConte
         message.from_user.id, currency.convert_to_eur(amount), message.text
     )
     # update user balance
-    await user.update(balance=user.balance + amount)
+    await user.update(balance=user.balance + currency.convert_to_eur(amount))
     # notify admins
     await send_message_to_admins(
         render_template(
