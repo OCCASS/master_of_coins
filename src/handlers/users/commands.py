@@ -35,7 +35,7 @@ async def balance_command(message: types.Message, state: FSMContext):
     )
 
 
-@dp.message_handler(command=["register"], state="*")
+@dp.message_handler(commands=["register"], state="*")
 async def register_command(message: types.Message, state: FSMContext):
     user = await User.get(id=message.from_user.id)
     if user is None:
