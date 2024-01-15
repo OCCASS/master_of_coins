@@ -492,7 +492,7 @@ async def handle_partner_reports_partner(
     query: types.CallbackQuery, callback_data: dict, state: FSMContext
 ):
     await query.message.delete_reply_markup()
-    partner_id = int(callback_data.get("id", -2))
+    partner_id = int(callback_data.get("id", -1))
     await send_message(
         render_template("enter_date.j2"), reply_markup=types.ReplyKeyboardRemove()
     )
