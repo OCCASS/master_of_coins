@@ -8,7 +8,7 @@ from .callbacks import select_partner, select_user, select_currency
 
 
 def get_select_partner_keyboard(
-    partners: Sequence[Partner], all_partner_button: bool = False
+        partners: Sequence[Partner], all_partner_button: bool = False
 ) -> types.InlineKeyboardMarkup:
     keyboard = types.InlineKeyboardMarkup()
     if all_partner_button:
@@ -25,7 +25,7 @@ def get_select_partner_keyboard(
 
 
 async def get_select_users_keyboard(
-    users: Sequence[User],
+        users: Sequence[User],
 ) -> types.InlineKeyboardMarkup:
     keyboard = types.InlineKeyboardMarkup()
     for u in users:
