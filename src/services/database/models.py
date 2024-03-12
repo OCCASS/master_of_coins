@@ -37,6 +37,7 @@ class User(Model):
     created_at: Mapped[datetime.datetime] = mapped_column(
         sa.DateTime, default=datetime.datetime.now
     )
+    in_work: Mapped[bool] = mapped_column(sa.Boolean, default=True)
     active: Mapped[bool] = mapped_column(sa.Boolean, default=True)
 
     async def get_currency(self) -> Currency:
@@ -142,4 +143,19 @@ class Charity(Model):
     total_amount: Mapped[float] = mapped_column(sa.Float, default=0)
     last_debiting_at: Mapped[datetime.datetime] = mapped_column(
         sa.DateTime, nullable=True, default=None
+    )
+
+
+class WorkInterval(Model):
+    __tablename__ = "work_interval"
+
+    id: Mapped[int] = mapped_column(sa.Integer, primary_key=True, autoincrement=True)
+    start_at: Mapped[datetime.datetime] = mapped_column(
+        sa.DateTime, default=datetime.datetime.now()
+    )
+    end_at: Mapped[datetime.datetime] = mapped_column(
+        sa.DateTime, default=None, nullable=True
+    )
+    user: Mapped[int] = mapped_column(
+        sa.BigInteger, sa.ForeignKey("user.id"), primary_key=True
     )

@@ -161,3 +161,21 @@ async def deactive_report(report_id: int) -> None:
 
 async def get_charities() -> Sequence[Charity]:
     return await Charity.all()
+
+
+async def update_user_work_staus(user: int, status: bool) -> None:
+    user = await User.get(id=user)
+    await user.update(in_work=status)
+
+
+async def start_work_interval(user: int) -> None:
+    await WorkInterval.create(user=user)
+
+
+async def get_last_work_interval(user: int) -> WorkInterval:
+    return await WorkInterval.get(user=user, end_at=None)
+
+
+async def end_last_work_interval(user: int) -> None:
+    last_work_interval = await get_last_work_interval(user)
+    await last_work_interval.update(end_at=datetime.datetime.now())
