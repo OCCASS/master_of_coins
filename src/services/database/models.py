@@ -93,6 +93,7 @@ class Partner(Model):
     id: Mapped[int] = mapped_column(sa.Integer, primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(sa.String)
     active: Mapped[bool] = mapped_column(sa.Boolean, default=True)
+    max_salary_percent: Mapped[int] = mapped_column(sa.Integer, default=12)
 
 
 class Salary(Model):

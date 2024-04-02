@@ -53,6 +53,7 @@ async def handle_create_report_partner(
 ):
     await query.message.delete_reply_markup()
     partner_id = int(callback_data.get("id", -1))
+    partner = await Partner.get(id=partner_id)
 
     if partner_id != settings.BET_20_PARTNER_ID:
         await send_message(
@@ -60,7 +61,7 @@ async def handle_create_report_partner(
                 "create_report/salary_percent.j2",
                 context={
                     "min": settings.MIN_SALARY_PERCENT,
-                    "max": settings.MAX_SALARY_PERCENT,
+                    "max": partner.max_salary_percent,
                 },
             )
         )
@@ -110,7 +111,7 @@ async def handle_create_report_confirm(
 
             if partner == settings.BET_20_PARTNER_ID:
                 salary = await user.get_bet20_salary()
-                update_amount = report.profit() * settings.BET_20_SALARY_FRACTION
+                update_amount = report.bet_amount * settings.DEFAULT_SALARY_FRACTION
                 await salary.update(
                     amount=salary.amount + update_amount,
                     total_amount=salary.total_amount + update_amount,

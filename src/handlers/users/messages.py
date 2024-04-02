@@ -99,14 +99,14 @@ async def handle_create_report_salary_percent(
         await send_message(render_template("invalid_integer.j2"))
         return
 
+    data = await state.get_data()
+    partner = await Partner.get(id=data.get("partner"))
     if not (
-        settings.MIN_SALARY_PERCENT <= int(message.text) <= settings.MAX_SALARY_PERCENT
+        settings.MIN_SALARY_PERCENT <= int(message.text) <= partner.max_salary_percent
     ):
         await send_message(render_template("create_report/invalid_salary.j2"))
         return
 
-    data = await state.get_data()
-    partner = await Partner.get(id=data.get("partner"))
     currency = await Currency.get(id=data.get("currency"))
     await send_confirm_report(
         data.get("amount", 0),
