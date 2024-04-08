@@ -55,33 +55,17 @@ async def handle_create_report_partner(
     partner_id = int(callback_data.get("id", -1))
     partner = await Partner.get(id=partner_id)
 
-    if partner_id != settings.BET_20_PARTNER_ID:
-        await send_message(
-            render_template(
-                "create_report/salary_percent.j2",
-                context={
-                    "min": settings.MIN_SALARY_PERCENT,
-                    "max": partner.max_salary_percent,
-                },
-            )
+    await send_message(
+        render_template(
+            "create_report/salary_percent.j2",
+            context={
+                "min": settings.MIN_SALARY_PERCENT,
+                "max": partner.max_salary_percent,
+            },
         )
-        await state.update_data(partner=partner_id)
-        await state.set_state(States.CreateReport.salary_percent)
-    else:
-        data = await state.get_data()
-        partner = await Partner.get(id=partner_id)
-        currency = await Currency.get(id=data.get("currency"))
-        await send_confirm_report(
-            data.get("amount", 0),
-            data.get("refund_amount", 0),
-            0,
-            data.get("photo", ""),
-            partner,
-            currency,
-            data.get("erroneous", False),
-        )
-        await state.update_data(partner=partner_id, salary_percent=0)
-        await state.set_state(States.CreateReport.confirm)
+    )
+    await state.update_data(partner=partner_id)
+    await state.set_state(States.CreateReport.salary_percent)
 
 
 @dp.callback_query_handler(confirm_report.filter(), state=States.CreateReport.confirm)
@@ -109,16 +93,16 @@ async def handle_create_report_confirm(
                 erroneous,
             )
 
+            salary_fraction = salary_percent / 100
             if partner == settings.BET_20_PARTNER_ID:
                 salary = await user.get_bet20_salary()
-                update_amount = report.amount * settings.DEFAULT_SALARY_FRACTION
+                update_amount = report.amount * salary_fraction
                 await salary.update(
                     amount=salary.amount + update_amount,
                     total_amount=salary.total_amount + update_amount,
                 )
             else:
                 salary = await user.get_salary()
-                salary_fraction = salary_percent / 100
 
                 if erroneous:
                     fine_amount = report.amount * 3 * salary_fraction
